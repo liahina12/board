@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.Lee.mapper.BoardAttachMapper">
+
+<insert id="insert">
+insert into tb1_attach(uuid,uploadPath,fileName,fileType,bno) 
+values(#{uuid},#{uploadPath},#{fileName},#{fileType},#{bno})
+</insert>
+
+<select id="findByBno" resultType="org.Lee.domain.BoardAttachVO">
+select * from tb1_attach where bno = #{bno}
+</select>
+
+<select id="getOldFiles" resultType="org.Lee.domain.BoardAttachVO">
+<!-- SELECT * FROM tb1_attach WHERE uploadPath > (NOW() - INTERVAL 7 DAY); -->
+select * from tb1_attach where uploadPath = to_char(sysdate -1, 'yyyy\mm\dd')
+</select>
+
+<delete id="delete">
+delete from tb1_attach where uuid = #{uuid}
+</delete>
+
+<delete id="deleteAll">
+delete from tb1_attach where bno = #{bno}
+</delete>
+
+
+</mapper>
+

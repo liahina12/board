@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.Lee.mapper.ReplyMapper">
+ <insert id="insert">
+  insert into tb1_reply (bno,reply, replyer)
+  values (#{bno},#{reply},#{replyer})
+ </insert>
+<select id="read" resultType="org.Lee.domain.ReplyVO">
+ select * from tb1_reply where rno = #{rno}
+</select>
+<delete id="delete">
+ delete from tb1_reply where rno = #{rno}
+</delete>
+<update id="update">
+ update tb1_reply set reply = #{reply}, updateDate = sysdate() where rno = #{rno}
+</update>
+<select id="getListWithPaging" resultType="org.Lee.domain.ReplyVO">
+  <!-- select rno, bno, reply, replyer, replydate, updateDate from tb1_reply where bno = #{bno} order by rno desc -->
+  <![CDATA[
+select rno, bno, reply, replyer, replydate, updateDate
+from(
+      select @rownum:=@rownum+1 as rn, rno, bno, reply, replyer, replydate, updateDate
+      from (select @rownum:=0) as tmp, tb1_reply
+      where bno = #{bno} and rno > 0 
+      order by rno desc
+      ) replyList
+where rn > (#{cri.pageNum}-1) * #{cri.amount} and rn <= #{cri.pageNum} * #{cri.amount}
+  
+  ]]>
+</select>
+<select id="getCountByBno" resultType="int">
+<![CDATA[
+  select count(rno) from tb1_reply where bno = #{bno}
+]]>
+</select>
+
+<update id="updateReplyCnt">
+ update tb1_board set replycnt = replycnt + #{amount} where bno = #{bno}
+</update>
+
+</mapper>
